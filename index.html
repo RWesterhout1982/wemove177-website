@@ -544,7 +544,7 @@ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* ---------- acties (publiek) ---------- */
 const PUBQUIZ={id:'pubquiz',start:'2027-02-06',end:'2027-02-06',type:'Pubquiz',title:'De WeMove Pubquiz',
   time:'Inloop vanaf 19:15',place:'Tennis Maasdam, Polderdijk 8, 3299 LN Maasdam',price:'€ 15,- p.p.',
-  text:'Verzamel je slimste vrienden, collega\'s of buren en strijd mee om de titel. Teams van 3 tot 6 personen, maximaal 60 deelnemers. Bestel bij je inschrijving meteen een borrelplank voor aan tafel.',mode:'quiz',max:60,min:3,teamMax:6,pp:15};
+  text:'Verzamel je slimste vrienden, collega\'s of buren en strijd mee om de titel. Teams van 3 tot 6 personen, maximaal 60 deelnemers.',mode:'quiz',max:60,min:3,teamMax:6,pp:15};
 const ACTIES=[PUBQUIZ,
  {id:'seuter',start:'2026-11-13',end:'2026-11-13',type:'Actie',title:'Seuter Bingo',
   time:'Inloop 18:45 · aanvang 19:30',place:"'s-Gravendeelse IJsclub",price:'Gratis entree',
@@ -649,10 +649,7 @@ function openFor(a){
       <label for="f-name">Naam aanvoerder<input id="f-name" required autocomplete="name"></label>
       <div class="two"><label for="f-mail">E-mail<input id="f-mail" type="email" required autocomplete="email"></label>
       <label for="f-tel">Telefoon<input id="f-tel" type="tel" autocomplete="tel"></label></div>
-      <fieldset class="radio"><legend>Borrelplank bij bestellen?</legend>
-        <label><input type="radio" name="plank" value="Ja" id="f-plank-ja"> Ja, graag</label>
-        <label><input type="radio" name="plank" value="Nee" id="f-plank-nee" checked> Nee, dank je</label>
-        <small>Prijs volgt. De borrelplank reken je af aan de bar.</small></fieldset>
+      
       <label for="f-msg">Opmerking (optioneel)<textarea id="f-msg"></textarea></label>
       <div class="total"><span>Inschrijfgeld team</span><span id="tot">€ ${a.min*a.pp},-</span></div>
       <p class="note">Na je inschrijving ontvang je per e-mail een Tikkie voor het inschrijfgeld.</p>
@@ -664,9 +661,9 @@ function openFor(a){
       if(!v('f-team')) return flag('f-team','Vul een teamnaam in.');
       if(!v('f-name')) return flag('f-name','Vul de naam van de aanvoerder in.');
       if(!/^\S+@\S+\.\S+$/.test(v('f-mail'))) return flag('f-mail','Vul een geldig e-mailadres in.');
-      const n=+nSel.value, plank=document.querySelector('input[name=plank]:checked').value;
-      const body=`Inschrijving Pubquiz (${dateTxt(a)})\n\nTeamnaam: ${v('f-team')}\nAantal personen: ${n}\nAanvoerder: ${v('f-name')}\nE-mail: ${v('f-mail')}\nTelefoon: ${v('f-tel')||'-'}\nBorrelplank: ${plank}\nBedrag: € ${n*a.pp},-\nOpmerking: ${v('f-msg')||'-'}`;
-      send({soort:'Pubquiz',actie:a.title,datum:a.start,teamnaam:v('f-team'),naam:v('f-name'),email:v('f-mail'),telefoon:v('f-tel'),aantal:n,borrelplank:plank,totaal:'€ '+(n*a.pp)+',-',opmerking:v('f-msg')},`Inschrijving Pubquiz – ${v('f-team')}`,body);
+      const n=+nSel.value;
+      const body=`Inschrijving Pubquiz (${dateTxt(a)})\n\nTeamnaam: ${v('f-team')}\nAantal personen: ${n}\nAanvoerder: ${v('f-name')}\nE-mail: ${v('f-mail')}\nTelefoon: ${v('f-tel')||'-'}\nBedrag: € ${n*a.pp},-\nOpmerking: ${v('f-msg')||'-'}`;
+      send({soort:'Pubquiz',actie:a.title,datum:a.start,teamnaam:v('f-team'),naam:v('f-name'),email:v('f-mail'),telefoon:v('f-tel'),aantal:n,borrelplank:'',totaal:'€ '+(n*a.pp)+',-',opmerking:v('f-msg')},`Inschrijving Pubquiz – ${v('f-team')}`,body);
     });
   } else if(a.mode==='order'){
     dBody.innerHTML=`<form id="f" novalidate>
