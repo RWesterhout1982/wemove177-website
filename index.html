@@ -293,6 +293,25 @@ fieldset.radio small{color:var(--ink-soft);font-size:.8rem}
   -webkit-mask:radial-gradient(circle at 30% 40%,#000 0 60%,rgba(0,0,0,.75) 61%) ;mask:radial-gradient(circle at 30% 40%,#000 0 60%,rgba(0,0,0,.75) 61%);
   animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes stampIn{from{transform:scale(2.2);opacity:0}to{transform:scale(1);opacity:1}}
+/* instagram polaroidmuur */
+.insta{padding-block:90px;background:radial-gradient(60% 70% at 15% 30%,rgba(236,125,31,.14),transparent 70%),var(--navy)}
+.insta-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:44px}
+.insta h2{font-size:clamp(2rem,4.2vw,3.3rem);font-weight:800;letter-spacing:-.02em;margin:10px 0 0}
+.insta-head .btn svg{width:20px;height:20px}
+.pola-wall{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.pola{display:block;text-decoration:none;color:var(--navy);background:var(--white);padding:10px 10px 14px;border-radius:5px;box-shadow:0 24px 50px -22px rgba(0,0,0,.75);transform:rotate(var(--r));transition:transform .35s cubic-bezier(.2,1.4,.4,1),box-shadow .35s;position:relative}
+.pola:nth-child(1){--r:-3deg}.pola:nth-child(2){--r:2deg}.pola:nth-child(3){--r:-1.5deg}.pola:nth-child(4){--r:3deg}
+.pola:hover,.pola:focus-visible{transform:rotate(0) scale(1.05);box-shadow:0 34px 70px -24px rgba(0,0,0,.85);z-index:2}
+.pola .ph{position:relative;aspect-ratio:4/5;overflow:hidden;border-radius:2px;background:#E9EAF3}
+.pola img{width:100%;height:100%;object-fit:cover}
+.pola .reel{position:absolute;right:8px;top:8px;width:30px;height:30px;border-radius:50%;background:rgba(20,24,56,.65);display:flex;align-items:center;justify-content:center}
+.pola .reel svg{width:13px;height:13px;color:var(--white);margin-left:2px}
+.pola .new{position:absolute;left:8px;top:8px;background:var(--orange);color:var(--white);font-weight:800;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:.3em .75em}
+.pola .cap{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600;font-size:.9rem;line-height:1.35;margin:12px 4px 4px;min-height:2.7em}
+.pola small{display:block;margin:0 4px;color:var(--ink-soft);font-size:.78rem;font-weight:500}
+.pola::before{content:"";position:absolute;top:-12px;left:50%;width:70px;height:22px;transform:translateX(-50%) rotate(-3deg);background:rgba(236,125,31,.55);border-radius:2px}
+.pola .cap{overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:900px){.pola-wall{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 18px}.pola .cap{font-size:.82rem}}
 /* team strip */
 .team{padding-block:90px;background:var(--navy-deep)}
 .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
@@ -507,6 +526,16 @@ footer a{color:var(--white);font-weight:600}
     <h2>Komende acties</h2>
     <p class="intro">Met deze acties halen we geld op voor de Roparun. Kom langs, doe mee of bestel iets lekkers. Bij acties met een aanmeldknop kun je je hier direct opgeven.</p>
     <div class="list" id="list"></div>
+  </div>
+</section>
+
+<section class="insta" id="insta" hidden>
+  <div class="wrap">
+    <div class="insta-head">
+      <div><div class="eyebrow">Laatst op Instagram</div><h2>Vers van het team</h2></div>
+      <a class="btn btn-o" href="https://www.instagram.com/wemove177/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg> Volg @wemove177</a>
+    </div>
+    <div class="pola-wall" id="polaWall"></div>
   </div>
 </section>
 
@@ -790,6 +819,22 @@ document.getElementById('mmClose').addEventListener('click',()=>setMenu(false));
 mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mm.hidden=true;document.body.classList.remove('menu-open');burger.setAttribute('aria-expanded','false')}));
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!mm.hidden)setMenu(false)});
 addEventListener('resize',()=>{if(innerWidth>720&&!mm.hidden)setMenu(false)});
+
+/* ---------- instagram: laatste 4 posts (via script-cache) ---------- */
+function relDate(iso){const d=Math.floor((Date.now()-new Date(iso))/864e5);if(d<=0)return'Vandaag';if(d===1)return'Gisteren';if(d<7)return d+' dagen geleden';if(d<14)return'Vorige week';const t=new Date(iso);return t.getDate()+' '+['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'][t.getMonth()];}
+function renderInsta(posts){
+  if(!posts||!posts.length)return;
+  const play='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg>';
+  document.getElementById('polaWall').innerHTML=posts.slice(0,4).map(p=>{
+    const fresh=(Date.now()-new Date(p.date))<3*864e5;
+    return `<a class="pola" href="${esc(p.url)}" target="_blank" rel="noopener"><div class="ph"><img src="${esc(p.img)}" alt="${esc(p.caption||'Instagram-post van WeMove')}" loading="lazy">${p.reel?`<span class="reel">${play}</span>`:''}${fresh?'<span class="new">Nieuw</span>':''}</div><span class="cap">${esc(p.caption||'Bekijk op Instagram')}</span><small>${relDate(p.date)}</small></a>`;}).join('');
+  document.getElementById('insta').hidden=false;
+}
+async function loadInsta(){
+  if(!SHEET_URL||!/^https?:$/.test(location.protocol))return;
+  try{const j=await (await fetch(SHEET_URL+'?type=insta')).json();renderInsta(j.posts)}catch(e){}
+}
+window.renderInsta=renderInsta;loadInsta();
 
 /* ---------- pubquiz: plekken + promotie ---------- */
 let quizCount=null;
